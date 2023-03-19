@@ -1,0 +1,13 @@
+{
+  "name": "document-parser",
+  "version": "1.0.0",
+  "description": "just a simple parser using open ai",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
