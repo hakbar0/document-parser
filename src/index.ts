@@ -8,7 +8,7 @@ dotenv.config();
 
 const openai = new OpenAI(process.env.OPENAI_API_KEY as string);
 const filePath = path.join(__dirname, "cv.pdf");
-const model = "davinci-codex";
+const model = "text-davinci-003";
 
 const parsePDF = async (filePath: string) => {
   const pdfBuffer = fs.readFileSync(filePath);
@@ -24,21 +24,21 @@ function removeSpecialChars(text: string): string {
   try {
     const document = await parsePDF(filePath);
     const cleanedDocument = removeSpecialChars(document);
-    const prompt = `Parse the following document and return a JSON output. If you can't find any answer, please return null. The Json returned should be in the format of. Where jobHist is the different companies the worker has worked
-    {
-      "firstName", "lastname", "address", "postcode", contact", jobHist:[{companyName, startdate, enddate, summary}]
-    }
-    :\n${cleanedDocument}`;
+    console.log(cleanedDocument);
+    const prompt = `Parse the following document and return a JSON output with the following fields: firstName, lastName, address, postcode, email, mobile number, and job history. The job history should be an array with the format: [{companyName, startDate, endDate}]. If you can't find any answer, please return null. The document is as follows:\n${cleanedDocument}`;
 
     const response = await openai.complete({
       engine: model,
       prompt: prompt,
       maxTokens: 1024,
       n: 1,
-      temperature: 0.7,
+      temperature: 0,
+      topP: 1,
+      frequencyPenalty: 0,
+      presencePenalty: 0,
     });
 
-    const parsedResponse = response.data.choices;
+    const parsedResponse = JSON.parse(response.data.choices[0].text);
     console.log(parsedResponse);
   } catch (error) {
     console.error(error);
